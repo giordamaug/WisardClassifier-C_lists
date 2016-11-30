@@ -33,7 +33,7 @@ apt-get update \
     pkg-config \
     python3.5 \
     python3.5-dev
-RUN pip install numpy scipy sklearn
+RUN pip install numpy scipy sklearn pillow
 
 ################## WISC INSTALLATION ######################
 # Install WisardClassifier
