@@ -8,10 +8,6 @@ from wis import WIS
 from sklearn.metrics import confusion_matrix, accuracy_score
 from utilities import *
 
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction import DictVectorizer as DV
-from sklearn import preprocessing
-
 # (Try) import matplot for graphics
 try:
     import matplotlib.pyplot as plt
