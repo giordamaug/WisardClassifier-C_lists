@@ -9,9 +9,9 @@ Machine learning supervised method for classification using WiSARD<sup>rp</sup>
 Description
 ----------------------
 
-WisardClassifier is a machine learning classifer implemented as an exntension moduule of
+WisardClassifier is a machine learning classifer implemented as an exntension module of
 the scikit-learn package in Python.
-As a consequence, to use WisardClassifier you nee the following packages intsalled in your
+As a consequence, to use WisardClassifier you nee the following packages installed in your
 Python environment:
 
 1) Numpy
@@ -19,6 +19,11 @@ Python environment:
 2) Scikit
 
 3) Scikit-Learn
+
+WisardClassifier is based on the WiSARD C++ Library, that can be download for installation at:
+https://github.com/giordamaug/WisardLibrary (see the referring github page for installation of library).
+Be sure that, once compiled, the library binary (libwisard-cxx-X.Y.<ext>) is in the same directory of the
+python script. Otherwise you have to fix the library path in wrapper file <code>wisard.py</code>
 
 ----------------------
 Usage
