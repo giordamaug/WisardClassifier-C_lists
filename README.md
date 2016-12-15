@@ -8,3 +8,40 @@ Machine learning supervised method for classification using WiSARD<sup>rp</sup>
 ----------------------
 Description
 ----------------------
+
+WisardClassifier is a machine learning classifer implemented as an exntension moduule of
+the scikit-learn package in Python.
+As a consequence, to use WisardClassifier you nee the following packages intsalled in your
+Python environment:
+
+1) Numpy
+2) Scikit
+3) Scikit-Learn
+
+----------------------
+Usage
+----------------------
+
+Hereafter we report a Python script as an example of usage of WisardClassifier within the Scikit-Learn
+machine learning programming framework. For a more complete example, see file <code>test.py</code>.
+
+```
+# import sklearn and scipy stuff
+from sklearn.datasets import load_svmlight_file
+from sklearn import cross_validation
+import scipy.sparse as sps
+# import wisard classifier library
+from wis import WIS
+from sklearn.metrics import confusion_matrix, accuracy_score
+from utilities import *
+
+# IRIS (libsvm) - load datasets
+X_train, y_train = load_svmlight_file(open("iris.libsvm", "r"))
+class_names = np.unique(y_train)
+X_train = X_train.toarray() if sps.issparse(X_train) else X_train  # avoid sparse data
+
+# IRIS - cross validation example
+clf = WIS(nobits=16,notics=1024,debug=True)
+kf = cross_validation.StratifiedKFold(y_train, 10)
+predicted = cross_validation.cross_val_score(clf, X_train, y_train, cv=kf, n_jobs=1, verbose=0)
+print("Accuracy Avg: %.2f" % predicted.mean())
