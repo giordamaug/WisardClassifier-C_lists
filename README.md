@@ -22,6 +22,7 @@ Python environment:
 
 WisardClassifier is based on the WiSARD C++ Library, that can be download for installation at:
 https://github.com/giordamaug/WisardLibrary (see the referring github page for installation of library).
+
 Be sure that, once compiled, the library binary (libwisard-cxx-X.Y.<ext>) is in the same directory of the
 python script. Otherwise you have to fix the library path in wrapper file <code>wisard.py</code>
 
