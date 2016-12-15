@@ -15,7 +15,9 @@ As a consequence, to use WisardClassifier you nee the following packages intsall
 Python environment:
 
 1) Numpy
+
 2) Scikit
+
 3) Scikit-Learn
 
 ----------------------
