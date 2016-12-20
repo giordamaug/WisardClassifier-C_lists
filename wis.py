@@ -66,6 +66,10 @@ class WIS(BaseEstimator, ClassifierMixin):
     rowcounter_ = 0
     progress_ = 0.0
     starttm_ = 0
+    bleach_flag_ = False
+    b_def = 1.0
+    conf_def = 0.1
+    confidence_ = 0.0
     def __init__(self,nobits=8,notics=256,coding='histo',mapping='random',debug=False,bleaching=False,default_bleaching=1,confidence_bleaching=0.1):
         if (not isinstance(nobits, int) or nobits<1 or nobits>64):
             raise Exception('number of bits must be an integer between 1 and 64')
@@ -122,6 +126,46 @@ class WIS(BaseEstimator, ClassifierMixin):
             X = X.toarray()
         D = self.decision_function(X)
         return self.classes_[np.argmax(D, axis=1)]
+    def response(self, data):
+        return [classifySvmHistoDiscr(self.wiznet_[cl],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_)
+                for cl in self.classes_]
+    def response_B(self, data):
+        b = self.b_def
+        confidence = 0.0
+        result_partial = None
+        res_disc = np.array([responseSvmHistoDiscr(self.wiznet_[class_name],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_) for class_name in self.classes_])
+        while confidence < self.conf_def:
+            result_partial = np.sum(res_disc >= b, axis=1)
+            confidence = self._calc_confidence(result_partial)
+            b += 1
+            if(np.sum(result_partial) == 0):
+                result_partial = np.sum(res_disc >= 1, axis=1)
+                break
+        result_sum = np.sum(result_partial, dtype=np.float32)
+        result = np.array(result_partial)/result_sum
+        return result
+
+    def _calc_confidence(self, results):
+        # get max value
+        max_value = results.max()
+        if(max_value == 0):  # if max is null confidence will be 0
+            return 0
+
+        # if there are two max values, confidence will be 0
+        position = np.where(results == max_value)
+        if position[0].shape[0]>1:
+            return 0
+
+        # get second max value
+        second_max = results[results < max_value].max()
+        if results[results < max_value].size > 0:
+            second_max = results[results < max_value].max()
+        
+        # calculating new confidence value
+        c = 1 - float(second_max) / float(max_value)
+        
+        return c
+    
     def decision_function(self,X):
         D = np.empty(shape=[0, len(self.classes_)])
         cnt = 0
@@ -129,8 +173,10 @@ class WIS(BaseEstimator, ClassifierMixin):
         self.progress_ = 0.01
         for row in X:
             data = row
-            res = [classifySvmHistoDiscr(self.wiznet_[cl],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_)
-                for cl in self.classes_]
+            if self.bleach_flag_:
+                res = self.response_B(data)  # classify with bleaching
+            else:
+                res = self.response(data)
             D = np.append(D, [res],axis=0)
             cnt += 1
             tm,tme = compTime(time.time()-self.starttm_,self.progress_)
