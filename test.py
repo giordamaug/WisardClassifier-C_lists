@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 # IRIS (arff) - load datasets
-data, meta = arff.loadarff(open("iris.arff", "r"))
+data, meta = arff.loadarff(open("../datasets/iris.arff", "r"))
 y_train = np.array(data['class'])
 X_train = np.array([list(x) for x in data[meta._attrnames[0:-1]]])
 X_train = X_train.toarray() if sps.issparse(X_train) else X_train  # avoid sparse data
@@ -29,7 +29,7 @@ predicted = cross_validation.cross_val_score(clf, X_train, y_train, cv=kf, n_job
 print("Accuracy Avg: %.2f" % predicted.mean())
 
 # IRIS (libsvm) - load datasets
-X_train, y_train = load_svmlight_file(open("iris.libsvm", "r"))
+X_train, y_train = load_svmlight_file(open("../datasets/iris.libsvm", "r"))
 class_names = np.unique(y_train)
 X_train = X_train.toarray() if sps.issparse(X_train) else X_train  # avoid sparse data
 # IRIS - cross validation example
@@ -39,10 +39,10 @@ predicted = cross_validation.cross_val_score(clf, X_train, y_train, cv=kf, n_job
 print("Accuracy Avg: %.2f" % predicted.mean())
 
 # DNA (libsvm) - load datasets
-X_train, y_train = load_svmlight_file(open("dna.tr", "r"))
+X_train, y_train = load_svmlight_file(open("../datasets/dna.tr", "r"))
 X_train = X_train.toarray() if sps.issparse(X_train) else X_train  # avoid sparse data
 class_names = np.unique(y_train)
-X_test, y_test = load_svmlight_file(open("dna.t", "r"))
+X_test, y_test = load_svmlight_file(open("../datasets/dna.t", "r"))
 X_test = X_test.toarray() if sps.issparse(X_test) else X_test  # avoid sparse data
 
 # DNA (arff) - testing example
