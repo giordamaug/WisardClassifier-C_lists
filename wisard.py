@@ -20,7 +20,8 @@ elif platform.system() == 'Darwin':
 else:
     raise Exception("Unsupported Platform")
 
-libpath = "libwisard-cxx_3.0" + suffix
+libpath = "../wisard3.0-cxx-library_github/libwisard-cxx_3.0" + suffix
+#libpath = "libwisard-cxx_3.0" + suffix
 wizl = CDLL(libpath)
 from PIL import Image
 HEADKEY = 18446744073709551615L
@@ -178,12 +179,19 @@ _classifySvmHistoDiscr.restype = c_double
 _classifySvmHistoDiscrThresholded = wizl.classifySvmHistoDiscrThresholded
 _classifySvmHistoDiscrThresholded.argtypes = [ POINTER(Discr), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int, c_int, c_double ]
 _classifySvmHistoDiscrThresholded.restype = c_double
+_responseSvmHistoDiscr = wizl.responseSvmHistoDiscr
+_responseSvmHistoDiscr.argtypes = [ POINTER(Discr), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int, c_int]
+_responseSvmHistoDiscr.restype = POINTER(c_double)
+
 def trainSvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
     _trainSvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
 def classifySvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
     return _classifySvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
 def classifySvmHistoDiscrThresholded(discr, data, den, off, ntics, nfeatures, threshold):
     return _classifySvmHistoDiscrThresholded(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures, threshold)
+def responseSvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
+    rawres = _responseSvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
+    return [ rawres[i] for i in range(discr.contents.n_ram)]
 
 
 def trainDiscr(discr, intuple):
