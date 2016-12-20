@@ -129,11 +129,13 @@ class WIS(BaseEstimator, ClassifierMixin):
     def response(self, data):
         return [classifySvmHistoDiscr(self.wiznet_[cl],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_)
                 for cl in self.classes_]
+    # work in progress
     def response_B(self, data):
         b = self.b_def
         confidence = 0.0
         result_partial = None
-        res_disc = np.array([responseSvmHistoDiscr(self.wiznet_[class_name],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_) for class_name in self.classes_])
+        res_disc = np.array([responseSvmHistoDiscr(self.wiznet_[cl],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_) for cl in self.classes_])
+        print res_disc
         while confidence < self.conf_def:
             result_partial = np.sum(res_disc >= b, axis=1)
             confidence = self._calc_confidence(result_partial)
@@ -174,7 +176,7 @@ class WIS(BaseEstimator, ClassifierMixin):
         for row in X:
             data = row
             if self.bleach_flag_:
-                res = self.response_B(data)  # classify with bleaching
+                res = self.response_B(data)  # classify with bleaching (Work in progress)
             else:
                 res = self.response(data)
             D = np.append(D, [res],axis=0)
