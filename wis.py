@@ -58,19 +58,16 @@ def compTime(deltatime,progress):
     tme = "{:0>2}:{:0>2}:{:02.0f}".format(int(hourse),int(minutese),secondse)
     return tm,tme
 
-class WIS(BaseEstimator, ClassifierMixin):
+class WisardClassifier(BaseEstimator, ClassifierMixin):
     """Wisard Classifier."""
     wiznet_ = {}
+    nrams = 0
     ranges_ = []
     offsets_ = []
     rowcounter_ = 0
     progress_ = 0.0
     starttm_ = 0
-    bleach_flag_ = False
-    b_def = 1.0
-    conf_def = 0.1
-    confidence_ = 0.0
-    def __init__(self,nobits=8,notics=256,coding='histo',mapping='random',debug=False,bleaching=False,default_bleaching=1,confidence_bleaching=0.1):
+    def __init__(self,nobits=8,notics=256,coding='histo',mapping='random',debug=False,bleaching=False,default_bleaching=1,confidence_bleaching=0.05):
         if (not isinstance(nobits, int) or nobits<1 or nobits>64):
             raise Exception('number of bits must be an integer between 1 and 64')
         if (not isinstance(notics, int) or notics<1):
@@ -79,23 +76,24 @@ class WIS(BaseEstimator, ClassifierMixin):
             raise Exception('bleaching flag must be a boolean')
         if (not isinstance(debug, bool)):
             raise Exception('debug flag must be a boolean')
-        if (not isinstance(default_bleaching, int) or nobits<1):
+        if (not isinstance(default_bleaching, int)) or nobits<1:
             raise Exception('bleaching downstep must be an integer greater than 1')
-        if (not isinstance(mapping, str) or (not (mapping=='random' or mapping=='linear'))):
+        if (not isinstance(mapping, str)) or (not (mapping=='random' or mapping=='linear')):
             raise Exception('mapping must either \"random\" or \"linear\"')
-        if (not isinstance(coding, str) or (not (coding=='histo' or mapping=='cursor' or mapping=='binary'))):
+        if (not isinstance(coding, str)) or (not (coding=='histo' or mapping=='cursor' or mapping=='binary')):
             raise Exception('random seed must be an integer')
-        if (not isinstance(confidence_bleaching, float)):
+        if (not isinstance(confidence_bleaching, float)) or confidence_bleaching<0 or confidence_bleaching>1:
             raise Exception('bleaching confidence must be a float between 0 and 1')
         self.nobits = nobits
         self.notics = notics
         self.mapping = mapping
         self.bleaching = bleaching
-        self.default_bleaching = default_bleaching
-        self.confidence_bleaching = confidence_bleaching
+        self.b_def = default_bleaching
+        self.conf_def = confidence_bleaching
         self.coding = coding
         self.debug = debug
-        pass
+        return
+            
     def fit(self, X, y):
         self.classes_, y = np.unique(y, return_inverse=True)
         self.size_,self.nfeatures_ = X.shape
@@ -107,7 +105,8 @@ class WIS(BaseEstimator, ClassifierMixin):
             self.ranges_ = (X.max(axis=0)-X.min(axis=0))
             self.offsets_ = X.min(axis=0)
         for cl in self.classes_:
-            self.wiznet_[cl] = makeDiscr(self.nobits, self.notics * self.nfeatures_, str(cl), self.mapping);
+            self.wiznet_[cl] = makeDiscr(self.nobits, self.notics * self.nfeatures_, str(cl), self.mapping)
+        self.nrams_ = getNRamDiscr(self.wiznet_[self.classes_[0]])
         cnt = 0
         self.progress_ = 0.01
         self.starttm_ = time.time()
@@ -133,9 +132,9 @@ class WIS(BaseEstimator, ClassifierMixin):
     def response_B(self, data):
         b = self.b_def
         confidence = 0.0
+        res_disc_list = [responseSvmHistoDiscr(self.wiznet_[cl],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_) for cl in self.classes_]
+        res_disc = np.array(res_disc_list)
         result_partial = None
-        res_disc = np.array([responseSvmHistoDiscr(self.wiznet_[cl],data,self.ranges_,self.offsets_,self.notics,self.nfeatures_) for cl in self.classes_])
-        print res_disc
         while confidence < self.conf_def:
             result_partial = np.sum(res_disc >= b, axis=1)
             confidence = self._calc_confidence(result_partial)
@@ -144,7 +143,10 @@ class WIS(BaseEstimator, ClassifierMixin):
                 result_partial = np.sum(res_disc >= 1, axis=1)
                 break
         result_sum = np.sum(result_partial, dtype=np.float32)
-        result = np.array(result_partial)/result_sum
+        if result_sum==0.0:
+            result = np.array(np.sum(res_disc, axis=1))/float(self.nrams_)
+        else:
+            result = np.array(result_partial)/result_sum
         return result
 
     def _calc_confidence(self, results):
@@ -175,7 +177,7 @@ class WIS(BaseEstimator, ClassifierMixin):
         self.progress_ = 0.01
         for row in X:
             data = row
-            if self.bleach_flag_:
+            if self.bleaching:
                 res = self.response_B(data)  # classify with bleaching (Work in progress)
             else:
                 res = self.response(data)
@@ -189,7 +191,8 @@ class WIS(BaseEstimator, ClassifierMixin):
         return D
     def get_params(self, deep=True):
         # suppose this estimator has parameters "alpha" and "recursive"
-        return {"nobits": self.nobits, "notics": self.notics, "coding": self.coding,"mapping": self.mapping, "debug": self.debug}
+        return {"nobits": self.nobits, "notics": self.notics, "coding": self.coding,"mapping": self.mapping, "debug": self.debug, "bleaching": self.bleaching,
+            "default_bleaching": self.b_def, "confidence_bleaching": self.conf_def}
     def set_params(self, **parameters):
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
