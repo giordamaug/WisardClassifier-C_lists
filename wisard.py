@@ -20,7 +20,7 @@ elif platform.system() == 'Darwin':
 else:
     raise Exception("Unsupported Platform")
 
-libpath = "../wisard3.0-cxx-library_github/libwisard-cxx_3.0" + suffix
+libpath = "libwisard-cxx_3.0" + suffix
 #libpath = "libwisard-cxx_3.0" + suffix
 wizl = CDLL(libpath)
 from PIL import Image
