@@ -67,7 +67,7 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
     rowcounter_ = 0
     progress_ = 0.0
     starttm_ = 0
-    def __init__(self,nobits=8,notics=256,coding='histo',mapping='random',debug=False,bleaching=False,default_bleaching=1,confidence_bleaching=0.05):
+    def __init__(self,nobits=8,notics=256,mapping='random',debug=False,bleaching=False,default_bleaching=1,confidence_bleaching=0.05):
         if (not isinstance(nobits, int) or nobits<1 or nobits>64):
             raise Exception('number of bits must be an integer between 1 and 64')
         if (not isinstance(notics, int) or notics<1):
@@ -80,8 +80,6 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
             raise Exception('bleaching downstep must be an integer greater than 1')
         if (not isinstance(mapping, str)) or (not (mapping=='random' or mapping=='linear')):
             raise Exception('mapping must either \"random\" or \"linear\"')
-        if (not isinstance(coding, str)) or (not (coding=='histo' or mapping=='cursor' or mapping=='binary')):
-            raise Exception('random seed must be an integer')
         if (not isinstance(confidence_bleaching, float)) or confidence_bleaching<0 or confidence_bleaching>1:
             raise Exception('bleaching confidence must be a float between 0 and 1')
         self.nobits = nobits
@@ -90,7 +88,6 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
         self.bleaching = bleaching
         self.b_def = default_bleaching
         self.conf_def = confidence_bleaching
-        self.coding = coding
         self.debug = debug
         return
             
@@ -191,7 +188,7 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
         return D
     def get_params(self, deep=True):
         # suppose this estimator has parameters "alpha" and "recursive"
-        return {"nobits": self.nobits, "notics": self.notics, "coding": self.coding,"mapping": self.mapping, "debug": self.debug, "bleaching": self.bleaching,
+        return {"nobits": self.nobits, "notics": self.notics, "mapping": self.mapping, "debug": self.debug, "bleaching": self.bleaching,
             "default_bleaching": self.b_def, "confidence_bleaching": self.conf_def}
     def set_params(self, **parameters):
         for parameter, value in parameters.items():
