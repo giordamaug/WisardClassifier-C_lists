@@ -45,7 +45,7 @@ def printProgressBar(label,time,etime,basecolor, cursorcolor, linecnt,progress,s
         else:
             str += u'\u2591'
     str += color.END + '| ' + "{:>3}".format(int(progress * 100.0)) + ' % ' + color.YELLOWBLACK + ' ' + etime + ' ' + color.WHITEBLACK + time + ' ' + color.END
-    sys.stdout.write("\r%s" % str)
+    sys.stdout.write("\r%s" % str.encode('utf-8'))
     sys.stdout.flush()
     return progress
 
