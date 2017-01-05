@@ -67,7 +67,7 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
     rowcounter_ = 0
     progress_ = 0.0
     starttm_ = 0
-    def __init__(self,nobits=8,notics=256,mapping='random',debug=False,bleaching=False,default_bleaching=1,confidence_bleaching=0.05):
+    def __init__(self,nobits=8,notics=256,mapping='random',debug=False,bleaching=False,default_bleaching=1,confidence_bleaching=0.05,seed=0):
         if (not isinstance(nobits, int) or nobits<1 or nobits>64):
             raise Exception('number of bits must be an integer between 1 and 64')
         if (not isinstance(notics, int) or notics<1):
@@ -82,6 +82,8 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
             raise Exception('mapping must either \"random\" or \"linear\"')
         if (not isinstance(confidence_bleaching, float)) or confidence_bleaching<0 or confidence_bleaching>1:
             raise Exception('bleaching confidence must be a float between 0 and 1')
+        if (not isinstance(seed, int)) or seed<0:
+            raise Exception('random seed must be an integer greater than 0')
         self.nobits = nobits
         self.notics = notics
         self.mapping = mapping
@@ -89,6 +91,7 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
         self.b_def = default_bleaching
         self.conf_def = confidence_bleaching
         self.debug = debug
+        self.seed = seed
         return
             
     def fit(self, X, y):
@@ -102,7 +105,7 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
             self.ranges_ = (X.max(axis=0)-X.min(axis=0))
             self.offsets_ = X.min(axis=0)
         for cl in self.classes_:
-            self.wiznet_[cl] = makeDiscr(self.nobits, self.notics * self.nfeatures_, str(cl), self.mapping)
+            self.wiznet_[cl] = makeDiscr(self.nobits, self.notics * self.nfeatures_, str(cl), self.mapping, self.seed)
         self.nrams_ = getNRamDiscr(self.wiznet_[self.classes_[0]])
         cnt = 0
         self.progress_ = 0.01
@@ -189,7 +192,7 @@ class WisardClassifier(BaseEstimator, ClassifierMixin):
     def get_params(self, deep=True):
         # suppose this estimator has parameters "alpha" and "recursive"
         return {"nobits": self.nobits, "notics": self.notics, "mapping": self.mapping, "debug": self.debug, "bleaching": self.bleaching,
-            "default_bleaching": self.b_def, "confidence_bleaching": self.conf_def}
+            "default_bleaching": self.b_def, "confidence_bleaching": self.conf_def, "seed": self.seed}
     def set_params(self, **parameters):
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
