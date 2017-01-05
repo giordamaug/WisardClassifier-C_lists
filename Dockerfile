@@ -20,7 +20,7 @@ ENV PYTHON_VERSION 3.5
 ENV NUM_CORES 4
 
 # Install OpenCV 3.0
-apt-get update \
+RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
     build-essential \
