@@ -33,8 +33,8 @@ print("Accuracy Avg: %.2f" % predicted.mean())
 X_train, y_train = load_svmlight_file(open("datasets/iris.libsvm", "r"))
 class_names = np.unique(y_train)
 X_train = X_train.toarray() if sps.issparse(X_train) else X_train  # avoid sparse data
-# IRIS - cross validation example
-clf = WisardClassifier(nobits=16,notics=1024,debug=True,bleaching=B_enabled)
+# IRIS - cross validation example (with fixed seed)
+clf = WisardClassifier(nobits=16,notics=1024,debug=True,bleaching=B_enabled,seed=848484848)
 kf = cross_validation.StratifiedKFold(y_train, 10)
 predicted = cross_validation.cross_val_score(clf, X_train, y_train, cv=kf, n_jobs=1, verbose=0)
 print("Accuracy Avg: %.2f" % predicted.mean())
