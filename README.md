@@ -31,10 +31,15 @@ Docker Installation/Usage
 ----------------------
 
 Firt you need to have docker client installed on your system. Then, you can install and test WisardClassfier 
-in a docker container withe following command:
+in a docker container with the command:
 
 ```bash
 $ docker build -t gioma/wiscl:v1 .
+```
+To run a bash shell in a docker container runnin gon the built image, and then run the 
+WisardClassifier <code>test.py</code> program scirpt, use the following commands:
+
+```bash
 $ docker run -it gioma/wiscl:v1 bash
 root@<imageID>:/home/WisardClassifier# python test.py
 ```
