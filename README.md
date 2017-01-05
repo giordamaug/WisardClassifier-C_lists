@@ -37,7 +37,7 @@ in a docker container with the command:
 $ docker build -t gioma/wiscl:v1 .
 ```
 To run a bash shell in a docker container runnin gon the built image, and then run the 
-WisardClassifier <code>test.py</code> program scirpt, use the following commands:
+WisardClassifier <code>test.py</code> program script, use the following commands:
 
 ```bash
 $ docker run -it gioma/wiscl:v1 bash
