@@ -50,4 +50,3 @@ RUN make
 WORKDIR /home
 RUN git clone https://github.com/giordamaug/WisardClassifier
 WORKDIR /home/WisardClassifier
-RUN python test.py
