@@ -27,7 +27,7 @@ Be sure that, once compiled, the library binary (libwisard-cxx-X.Y.<ext>) is in 
 python script. Otherwise you have to fix the library path in wrapper file <code>wisard.py</code>
 
 ----------------------
-Docker Installation
+Docker Installation/Usage
 ----------------------
 
 Firt you need to have docker client installed on your system. Then, you can install and test WisardClassfier 
@@ -35,6 +35,8 @@ in a docker container withe following command:
 
 ```bash
 $ docker build -t gioma/wiscl:v1 .
+$ docker run -it gioma/wiscl:v1 bash
+root@<imageID>:/home/WisardClassifier# python test.py
 ```
 
 ----------------------
