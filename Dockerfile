@@ -40,4 +40,10 @@ RUN pip install numpy scipy sklearn pillow
 #
 
 WORKDIR /home
-RUN git clone https://github.com/giordamaug/wisard3.0-cxx-library
+RUN git clone https://github.com/giordamaug/WisardLibrary
+WORKDIR /home/WisardLibrary
+RUN cmake .
+WORKDIR /home
+RUN git clone https://github.com/giordamaug/WisardClassifier
+WORKDIR /home/WisardClassifier
+RUN python test.py
