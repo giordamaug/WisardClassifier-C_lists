@@ -11,7 +11,7 @@ Description
 
 WisardClassifier is a machine learning classifer implemented as an exntension module of
 the scikit-learn package in Python.
-As a consequence, to use WisardClassifier you nee the following packages installed in your
+As a consequence, to use WisardClassifier you need the following packages installed in your
 Python environment:
 
 1) Numpy
@@ -25,6 +25,17 @@ https://github.com/giordamaug/WisardLibrary (see the referring github page for i
 
 Be sure that, once compiled, the library binary (libwisard-cxx-X.Y.<ext>) is in the same directory of the
 python script. Otherwise you have to fix the library path in wrapper file <code>wisard.py</code>
+
+----------------------
+Docker Installation
+----------------------
+
+Firt you need to have docker client installed on your system. Then, you can install and test WisardClassfier 
+in a docker container withe following command:
+
+```bash
+$ docker build -t gioma/wiscl:v1 .
+```
 
 ----------------------
 Usage
