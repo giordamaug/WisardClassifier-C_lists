@@ -18,7 +18,7 @@ elif platform.system() == 'Darwin':
 else:
     raise Error("Unsupported Platform")
 
-libpath = "../libwisard-cxx_3.0" + suffix
+libpath = "../WisardLibrary_github/libwisard-cxx_3.0" + suffix
 wizl = CDLL(os.path.join(os.environ['PWD'], libpath))
 HEADKEY = 18446744073709551615L
 
@@ -137,7 +137,6 @@ _classifyDiscr.restype = c_double
 _classifyDiscrThresholded = wizl.classifyDiscrThresholded
 _classifyDiscrThresholded.argtypes = [ POINTER(Discr), POINTER(c_key), c_value ]
 _classifyDiscrThresholded.restype = c_double
-
 _responseDiscr = wizl.responseDiscr
 _responseDiscr.argtypes = [ POINTER(Discr), POINTER(c_key) ]
 _responseDiscr.restype = POINTER(c_double)
@@ -176,6 +175,17 @@ def responseDiscr(discr, intuple):
         raise NameError('Wrong InTuple size')
     rawres = _responseDiscr(discr, (c_ulong * n)(*intuple))
     return [ rawres[i] for i in range(discr.contents.n_ram)]
+
+# for SVM
+_trainSvmHistoDiscr = wizl.trainSvmHistoDiscr
+_trainSvmHistoDiscr.argtypes = [ POINTER(Discr), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int, c_int ]
+_classifySvmHistoDiscr = wizl.classifySvmHistoDiscr
+_classifySvmHistoDiscr.argtypes = [ POINTER(Discr), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int, c_int ]
+_classifySvmHistoDiscr.restype = c_double
+def trainSvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
+    _trainSvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
+def classifySvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
+    return _classifySvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
 
 
 """ Mental Image methods """
