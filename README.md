@@ -30,7 +30,7 @@ python script. Otherwise you have to fix the library path in wrapper file <code>
 Docker Installation/Usage
 ----------------------
 
-Firt you need to have docker client installed on your system. Then, you can install and test WisardClassfier 
+First, you need to have docker client installed on your system. Then, you can install and test WisardClassfier 
 in a docker container with the command:
 
 ```bash
