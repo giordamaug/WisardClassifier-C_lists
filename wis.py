@@ -8,7 +8,7 @@ import sys,os
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 import scipy.sparse as sps
-from wisard import *
+from wisardwrapper import *
 import time
 import random
 
