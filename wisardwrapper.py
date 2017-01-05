@@ -182,10 +182,17 @@ _trainSvmHistoDiscr.argtypes = [ POINTER(Discr), POINTER(c_double), POINTER(c_do
 _classifySvmHistoDiscr = wizl.classifySvmHistoDiscr
 _classifySvmHistoDiscr.argtypes = [ POINTER(Discr), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int, c_int ]
 _classifySvmHistoDiscr.restype = c_double
+_responseSvmHistoDiscr = wizl.responseSvmHistoDiscr
+_responseSvmHistoDiscr.argtypes = [ POINTER(Discr), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int, c_int ]
+_responseSvmHistoDiscr.restype = POINTER(c_double)
+
 def trainSvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
     _trainSvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
 def classifySvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
     return _classifySvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
+def responseSvmHistoDiscr(discr, data, den, off, ntics, nfeatures):
+    rawres = _responseSvmHistoDiscr(discr, (c_double * nfeatures)(*data), (c_double * nfeatures)(*den),(c_double * nfeatures)(*off), ntics, nfeatures)
+    return [ rawres[i] for i in range(discr.contents.n_ram)]
 
 
 """ Mental Image methods """
